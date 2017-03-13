@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			body{
+				margin:0;
+				overflow: hidden;
+				
+			}
+			ul{
+				list-style: none;
+				margin:0;
+				padding:0;
+			}
+			#page9{
+				width: 100%;
+				/*background:palegreen;*/
+				position:absolute;
+				top: 0;
+				left: 0;
+			}
+			#page9 .page9Imgs{/*窗口*/
+				width: 100%;
+				position:absolute;
+				top: 0;
+				left: 0;
+				/*overflow: hidden;*/
+			} 
+			#page9 .page9Imgs .page9ImgBox{/*三个图片合并的大盒子*/
+				/*高度，left*/
+				width: 300%;
+				position:absolute;
+				top: 0;
+			}
+			
+			#page9 .page9Imgs .page9ImgBox div{/*大盒子里的三个小盒子*/
+				/*width: 30%;*/
+				height: 100%;
+				/*background:palegreen;*/
+				position:absolute;
+				top: 0;
+			}
+			#page9 .page9ImgBox div img{/*小盒子里的图片*/
+				width: 100%;
+				height: 100%;
+			}
+			
+			#page9 .page9Imglist{
+				width: 186px;
+				height:8px;
+				position:absolute;
+				left: 50%;
+				bottom:175px;
+				background: #fff;
+				/*margin-left:-89px;*/
+			}
+			#page9 .page9Imglist li{
+				width: 4px;
+				height: 4px;
+				border-radius: 50%;
+				background: #935a24;
+				float:left;
+				margin:1px 5px 0;
+			}
+			#page9 .page9Imglist .page9ListMoveLi{
+				width: 8px;
+				height: 8px;
+				margin-top:0;
+			}
+			#page9 .page9Btn{
+				width: 76px;
+				height: 75px;
+				background: red;
+				border-radius: 50%;
+				position:absolute;
+				top:40%;
+			}
+			#page9 .page9PrevBtn{
+				left:100px;
+			}
+			#page9 .page9NextBtn{
+				right:100px;
+			}
+		</style>
+	</head>
+	<body>
+		<section id="page9">
+			<div class="page9Imgs">
+				<div class="page9ImgBox">
+					<div>
+						<img src="" alt="" />
+					</div>
+					<div>
+						<img src="" alt="" />
+					</div>
+					<div>
+						<img src="" alt="" />
+					</div>
+				</div>
+			</div>
+			<ul class="page9Imglist"></ul>
+			<a class="page9Btn page9PrevBtn" href="javascript:;"></a>
+			<a class="page9Btn page9NextBtn" href="javascript:;"></a>
+		</section>
+		<script>
+//------------------------复制这中间的---------------------------------------
+			var page9 = document.getElementById("page9");
+			var page9ImgWindow = page9.getElementsByClassName("page9Imgs")[0];
+			var page9ImgBox = page9ImgWindow.getElementsByClassName("page9ImgBox")[0];//大盒子
+			var page9ImgDiv = page9ImgBox.getElementsByTagName("div");//小盒子
+			var page9Imgs = page9ImgBox.getElementsByTagName("img");//图片
+			var page9PrevBtn = page9.getElementsByClassName("page9PrevBtn")[0];
+			var page9NextBtn = page9.getElementsByClassName("page9NextBtn")[0];
+			var page9IsDown = false;//false代表不移动
+			var page9IsMove = false;
+			
+			var biliX = null;//记录窗口宽度 / 16(第九页图片比例为16:9);
+			var page9DisX = null;//判断第九页大盒子鼠标按下的位置
+			var page9MoveX = null;//判断第九页鼠标移动距离
+			var page9ImgArr = ["imgs/1_h.jpg","imgs/2_h.jpg","imgs/3_h.jpg","imgs/4_h.jpg","imgs/5_h.jpg","imgs/6_h.jpg","imgs/7_h.jpg","imgs/8_h.jpg","imgs/9_h.jpg","imgs/10_h.jpg","imgs/11_h.jpg","imgs/12_h.jpg","imgs/13_h.jpg"];
+			var page9ImgNum2 = 0;//当前中间是第几张图片
+			var page9ImgNum1 = page9ImgArr.length-1;//当前第一个是第几张图片
+			var page9ImgNum3 = page9ImgNum2+1;//当前最后一个是第几张图片
+			
+			var page9ImgList = page9.getElementsByClassName("page9Imglist")[0];
+			var page9ImgListHTML = "";
+			for (var i = 0; i < page9ImgArr.length; i++) {
+				page9ImgListHTML += "<li></li>";
+			}
+			
+			//console.log(page9ImgListHTML);
+			page9ImgList.innerHTML = page9ImgListHTML;
+			var page9ImgListLis = page9ImgList.getElementsByTagName("li");
+			page9ImgListLis[0].className = "page9ListMoveLi";
+			console.log(page9ImgListLis);
+//------------------------复制上面的---------------------------------------			
+			window.onresize = page1H;
+			page1H();
+			
+			function page1H() {
+				
+				windowH = document.documentElement.clientHeight;
+				windowW = document.documentElement.clientWidth;
+				console.log(windowW,windowH);
+				document.body.style.height = windowH + "px";
+				
+				
+//------------------------复制这中间的---------------------------------------
+				biliX = windowW/16;
+				page9ImgH = biliX * 9; // 第九页图片高度适配
+				console.log("第九页图片高度为:"+page9ImgH)
+				page9ImgWindow.style.height = page9ImgH + "px";
+				
+				page9ImgBox.style.left = -windowW + "px";
+				
+				page9.style.height = page9ImgH + "px";
+				for (var i = 0; i < page9ImgDiv.length; i++) {
+					page9ImgDiv[i].style.width = windowW + "px";
+					page9ImgDiv[i].style.height = page9ImgH + "px";
+					page9ImgDiv[i].style.left = i * windowW + "px";
+				}
+			}
+			
+			//初始化src
+			page9Imgs[0].src = page9ImgArr[page9ImgArr.length-1];
+			page9Imgs[1].src = page9ImgArr[0];
+			page9Imgs[2].src = page9ImgArr[1];
+			
+			page9ImgBox.addEventListener("mousedown",function(ev){
+				if(page9IsMove){
+					page9IsDown = false;
+					ev.preventDefault();
+					return;
+				}
+				page9IsDown = true;
+				page9DisX = ev.screenX;
+				console.log("按下的位置："+page9DisX);
+				ev.preventDefault();
+			})
+			page9ImgBox.addEventListener("mousemove",function(ev){
+				if(page9IsMove){
+					return;
+				}
+				if(!page9IsDown){
+					return;
+				}
+				
+				//鼠标移动的距离
+				//-----page9MoveX = 0;
+				page9MoveX = ev.screenX - page9DisX;
+				console.log("移动了："+page9MoveX);
+				//page9BoxMove = 0;
+				var page9BoxMove = windowW - page9MoveX;//大盒子应该走的距离
+				console.log(page9BoxMove);
+				page9ImgBox.style.left = -page9BoxMove + "px";
+				
+			})
+			page9ImgBox.addEventListener("mouseup",function(ev){
+				if(page9IsMove){
+					return;
+				}
+				page9IsDown = false;
+				
+				page9ImgMove();
+			})
+			page9PrevBtn.addEventListener("click",function(){
+				page9MoveX = 1;
+				page9ImgMove();
+			})
+			page9NextBtn.addEventListener("click",function(){
+				page9MoveX = -1;
+				page9ImgMove();
+			})
+			function page9ImgMove(){
+//				if(page9IsMove){
+//					return;
+//				}
+				//page9IsMove = true;
+				
+				if(page9MoveX < 0){//说明是切换下一张
+					if(page9IsMove){
+						return;
+					}
+					page9ImgNext();
+				}
+				if(page9MoveX > 0){//说明是切换上一张
+					if(page9IsMove){
+						return;
+					}
+					page9ImgPrev();
+				}
+				
+				//改变列表的显示
+				for (var i = 0; i < page9ImgListLis.length; i++) {
+					page9ImgListLis[i].className = "";
+				}
+				page9ImgListLis[page9ImgNum2].className = "page9ListMoveLi";
+				
+				setTimeout(function(){
+					//page9IsMove = false;
+					page9ImgBox.style.transition = "none";
+					page9ImgBox.style.left = -windowW + "px";
+					page9Imgs[0].src = page9ImgArr[page9ImgNum1];
+					page9Imgs[1].src = page9ImgArr[page9ImgNum2];
+					page9Imgs[2].src = page9ImgArr[page9ImgNum3];
+					page9IsMove = false;
+					page9MoveX = 0;
+				},1000)
+			}
+			function page9ImgNext(){
+				if(page9IsMove){
+					return;
+				}
+				page9IsMove = true;
+				console.log("下一张");
+				page9ImgBox.style.transition = "1s";
+				page9ImgNum1++;
+				page9ImgNum2++;
+				page9ImgNum3++;
+				
+				if(page9ImgNum1 > page9ImgArr.length-1){
+					page9ImgNum1 = 0;
+				}
+				if(page9ImgNum2 > page9ImgArr.length-1){
+					page9ImgNum2 = 0;
+				}
+				if(page9ImgNum3 > page9ImgArr.length-1){
+					page9ImgNum3 = 0;
+				}
+				console.log(page9ImgNum1,page9ImgNum2,page9ImgNum3);
+				page9ImgBox.style.left = -(2 * windowW) + "px";
+			}
+			function page9ImgPrev(){
+				if(page9IsMove){
+					return;
+				}
+				page9IsMove = true;
+				console.log("上一张");
+				page9ImgBox.style.transition = "1s";
+				page9ImgNum1--;
+				page9ImgNum2--;
+				page9ImgNum3--;
+				if(page9ImgNum1 < 0){
+					page9ImgNum1 = page9ImgArr.length-1;
+				}
+				if(page9ImgNum2 < 0){
+					page9ImgNum2 = page9ImgArr.length-1;
+				}
+				if(page9ImgNum3 < 0){
+					page9ImgNum3 = page9ImgArr.length-1;
+				}
+				console.log(page9ImgNum1,page9ImgNum2,page9ImgNum3);
+				page9ImgBox.style.left = 0;
+			}
+//------------------------复制上面的---------------------------------------			
+		</script>
+	</body>
+</html>
